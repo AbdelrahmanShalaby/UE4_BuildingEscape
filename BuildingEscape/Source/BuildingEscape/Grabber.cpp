@@ -30,9 +30,20 @@ void UGrabber::Grab()
 	UE_LOG(LogTemp, Warning, TEXT("Grab pressed"));
 
 	/// LINE TRACE  and see if we reach any actor with physics body collision channel set
-	GetFirstPhysicsBodyInReach(); 
+	auto HitResult = GetFirstPhysicsBodyInReach();
+	auto ComponentToGrab = HitResult.GetComponent();
+	auto ActorHit = HitResult.GetActor();
 	/// If we hit something attach a physics handle
-	// TODO attach physics handle
+	if (ActorHit)
+	{
+		// TODO attach physics handle
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			true // Allow rotation
+		);
+	}
 }
 
 void UGrabber::Released()
@@ -40,12 +51,13 @@ void UGrabber::Released()
 	UE_LOG(LogTemp, Warning, TEXT("Grab released"));
 
 	//TODO release physics handle
+	PhysicsHandle->ReleaseComponent();
 }
 //Look for attached physics handle
 void UGrabber::FindPhysicsHandleComponent()
 {
-	PhisicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
-	if (PhisicsHandle)
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicsHandle)
 	{
 		//physics handle is found 
 	}
@@ -79,9 +91,22 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// If the physics handle is attached 
-		// move the  object that we're holding
+	/// Get player view point 
+	FVector PlayerViewPiontLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT PlayerViewPiontLocation,
+		OUT PlayerViewPointRotation
+	);
 
+	FVector LineTraceEnd = PlayerViewPiontLocation + PlayerViewPointRotation.Vector() * Reach;
+
+	// If the physics handle is attached 
+	if (PhysicsHandle->GetGrabbedComponent())
+	{
+		// move the  object that we're holding
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+	}
 
 
 	
@@ -131,5 +156,5 @@ const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Line trace hit: %s"), *(ActorHit->GetName()));
 	}
-	return FHitResult();
+	return Hit;
 }
