@@ -17,7 +17,7 @@ UGrabber::UGrabber()
 }
 
 
-// Called when the game starts
+// Called when the game starts 
 void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
@@ -101,19 +101,6 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 const FHitResult UGrabber::GetFirstPhysicsBodyInReach()
 {
 
-	/*
-	/// Draw a red Trace in world to visualise
-	DrawDebugLine(
-	GetWorld(),
-	PlayerViewPiontLocation,
-	LineTraceEnd,
-	FColor(255, 0, 0),
-	false,
-	0.f,
-	0.f,
-	10.f
-	);
-	*/
 
 	/// Line trace (AKA ray-cast) out to reach distance
 	FHitResult HitResult;
