@@ -29,13 +29,6 @@ void UOpenDoor::BeginPlay()
 
 
 
-void UOpenDoor::CloseDoor()
-{
-	
-	//Set the door rotation
-	//Owner->SetActorRotation(FRotator(0.f, 0.f, 0.f));
-	OnClose.Broadcast();
-}
 
 // Called every frame
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -50,7 +43,7 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	}
 	else
 	{
-		CloseDoor();
+		OnClose.Broadcast();
 	}
 }
 
